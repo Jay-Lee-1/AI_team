@@ -1,0 +1,14 @@
+{
+  "key": "qa",
+  "name": "품질 검증",
+  "order": 4,
+  "next": "release",
+  "task_kinds": ["qa.verify", "qa.usability_check"],
+  "inputs": ["완료 기준", "디자인 요약", "변경 diff", "제어 프로그램이 실행한 검증 명령 결과"],
+  "outputs": ["통과/실패 판정", "발견 사항과 돌려보낼 부서", "검증된 기능 목록", "미검증 항목"],
+  "permissions": {"model_tools": ["Read", "Glob", "Grep"], "tool_scope": "작업 사본 폴더 안 읽기만",
+                  "write": "없음", "shell": "허용 목록의 검증 명령만 제어 프로그램이 실행", "network": false,
+                  "context": "개발과 분리된 새 세션"},
+  "timeout_sec": 900,
+  "token_limit": 100000
+}

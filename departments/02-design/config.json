@@ -1,0 +1,12 @@
+{
+  "key": "design",
+  "name": "디자인",
+  "order": 2,
+  "next": "development",
+  "task_kinds": ["design.initial", "design.improvement", "design.revise"],
+  "inputs": ["승인된 기획(완료 기준 포함)", "선택된 개선안", "기존 디자인 체계", "검증 반려 사유"],
+  "outputs": ["사용자 흐름과 화면 설계", "공통 디자인 체계", "로딩·오류·빈 화면", "실제 문구가 들어간 미리보기 HTML", "필요할 때만 시안 2개"],
+  "permissions": {"model_tools": [], "write": "artifacts/<프로젝트>/design (제어 프로그램이 기록)", "shell": false, "network": false},
+  "timeout_sec": 900,
+  "token_limit": 100000
+}

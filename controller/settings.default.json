@@ -1,0 +1,62 @@
+{
+  "_설명": "기본 설정입니다. 실제 값은 state/settings.json(관리 화면에서 변경)에 저장됩니다. AI 작업자는 이 파일과 state 폴더를 수정할 수 없습니다.",
+  "runner": "claude-cli",
+  "claude_command": "",
+  "auth": {
+    "mode": null
+  },
+  "budget": {
+    "daily_usd": null,
+    "monthly_usd": null,
+    "per_call_usd": 0.6,
+    "daily_tokens": null,
+    "safety_margin_ratio": 0.1,
+    "slowdown_ratio": 0.8
+  },
+  "models": {
+    "planning": "sonnet",
+    "design": "sonnet",
+    "development": "sonnet",
+    "qa": "sonnet",
+    "release": "haiku"
+  },
+  "max_parallel_calls": 1,
+  "decision_wait_hours": 24,
+  "maintenance": {
+    "auto_bugfix": false
+  },
+  "analysis": {
+    "min_new_inquiries": 3,
+    "max_wait_hours": 24
+  },
+  "customer_reply_auto_send": false,
+  "ports": {
+    "admin": 8787,
+    "preview": 8788,
+    "public": 8790,
+    "public_bind": "127.0.0.1"
+  },
+  "public_allowed_origins": [
+    "*"
+  ],
+  "log_retention_days": 30,
+  "min_free_gb": 5,
+  "required_drive": "D:",
+  "check_command_allowlist": [
+    "npm ci --ignore-scripts",
+    "npm install --ignore-scripts",
+    "python -m unittest",
+    "python -m pytest",
+    "npm test",
+    "npm run test",
+    "npm run build",
+    "npm run lint",
+    "node --test",
+    "flutter test",
+    "flutter analyze",
+    "dart test"
+  ],
+  "optional_features": {
+    "patent_prep": false
+  }
+}

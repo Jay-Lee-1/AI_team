@@ -1,0 +1,14 @@
+{
+  "key": "release",
+  "name": "출시·운영",
+  "order": 5,
+  "next": "planning",
+  "task_kinds": ["release.prepare", "release.docs"],
+  "inputs": ["품질 검증을 통과한 기능 목록", "기획 요약", "선택된 개선안"],
+  "outputs": ["판매 소개(검증된 기능만)", "사용 안내", "배포 준비와 복구 방법", "사용자 할 일 안내"],
+  "permissions": {"model_tools": [], "write": "artifacts/<프로젝트>/release (제어 프로그램이 기록)",
+                  "deploy": "사용자 승인 후에만", "customer_reply_send": false, "shell": false, "network": false},
+  "operations": ["앱 내 고객 문의 접수(공개 화면/위젯)", "문의 원본·재현 정보를 기획 부서로 전달", "배포 완료와 고객 문제 해결 확인 구분"],
+  "timeout_sec": 600,
+  "token_limit": 60000
+}

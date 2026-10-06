@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>문의하기</title>
+<link rel="stylesheet" href="support.css">
+</head>
+<body>
+<main>
+  <h1 id="appName">문의하기</h1>
+  <p class="lead">불편한 점이나 원하는 기능을 알려 주세요. 가입은 필요 없습니다.</p>
+  <form id="f" novalidate>
+    <label for="cat">문의 분류 <span class="req">필수</span></label>
+    <select id="cat" required>
+      <option value="">선택하세요</option>
+      <option value="bug">오류 신고</option><option value="feature">기능 요청</option>
+      <option value="usage">사용 방법</option><option value="billing">결제·계정</option><option value="other">기타</option>
+    </select>
+    <label for="content">무슨 일이 있었나요? <span class="req">필수</span></label>
+    <textarea id="content" required minlength="5" maxlength="4000" placeholder="예: 할 일을 저장하면 목록에 안 보여요"></textarea>
+    <label for="expected">원래 기대한 결과 <span class="opt">선택</span></label>
+    <textarea id="expected" maxlength="1000" placeholder="예: 저장하면 목록 맨 위에 보이면 좋겠어요"></textarea>
+    <label for="file">스크린샷 첨부 <span class="opt">선택 · png/jpg/webp/txt, 2MB 이하</span></label>
+    <input id="file" type="file" accept=".png,.jpg,.jpeg,.webp,.txt">
+    <label for="contact">답변 받을 연락처 <span class="opt">선택 · 답변이 필요할 때만</span></label>
+    <input id="contact" maxlength="200" placeholder="이메일 등">
+    <details><summary>함께 보내는 정보</summary>
+      <p class="small">문제를 재현하기 위해 <b>앱 버전</b>, <b>문의한 화면</b>, <b>브라우저·기기 종류</b>만 함께 보냅니다:
+      <span id="diag"></span>. 다른 개인정보는 수집하지 않습니다.</p></details>
+    <button type="submit" id="send">보내기</button>
+    <p id="msg" role="status"></p>
+  </form>
+  <section id="done" hidden>
+    <h2>접수되었습니다</h2>
+    <p>접수 번호 <b id="rno"></b></p>
+    <p class="small">처리 상태를 확인하려면 아래 확인 키를 함께 보관하세요: <code id="rkey"></code></p>
+  </section>
+  <details class="lookup"><summary>접수한 문의 상태 확인</summary>
+    <label for="lr">접수 번호</label><input id="lr">
+    <label for="lk">확인 키</label><input id="lk">
+    <button type="button" id="lb">확인</button><p id="lmsg" role="status"></p>
+  </details>
+</main>
+<script src="support.js"></script>
+</body>
+</html>

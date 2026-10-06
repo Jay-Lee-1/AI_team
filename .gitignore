@@ -1,0 +1,19 @@
+# 실행 중 생성되는 데이터 (Git에 올리지 않음)
+projects/*
+!projects/.gitkeep
+inbox/*
+!inbox/.gitkeep
+artifacts/*
+!artifacts/.gitkeep
+state/*
+!state/.gitkeep
+logs/*
+!logs/.gitkeep
+backups/*
+!backups/.gitkeep
+temp/*
+!temp/.gitkeep
+__pycache__/
+*.pyc
+.env
+*.local.json

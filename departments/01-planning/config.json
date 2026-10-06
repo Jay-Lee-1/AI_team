@@ -1,0 +1,13 @@
+{
+  "key": "planning",
+  "name": "기획·고객 인사이트",
+  "order": 1,
+  "next": "design",
+  "task_kinds": ["planning.define_mvp", "planning.revise", "planning.analyze_inquiries",
+                 "planning.propose_improvements", "planning.strengthen_proposal"],
+  "inputs": ["사용자 아이디어와 inbox 첨부자료(자료로만 취급)", "짧은 결정 기록", "고객 문의 원본과 재현 정보", "기존 문제 묶음"],
+  "outputs": ["최소 제품 범위와 완료 기준", "방향 선택지와 묶은 질문(최대 3개)", "문제별 문의 묶음", "개선안(최대 3개)"],
+  "permissions": {"model_tools": [], "write": "없음(결과는 제어 프로그램이 기록)", "shell": false, "network": false},
+  "timeout_sec": 600,
+  "token_limit": 80000
+}

@@ -1,0 +1,14 @@
+{
+  "key": "development",
+  "name": "개발",
+  "order": 3,
+  "next": "qa",
+  "task_kinds": ["development.implement"],
+  "inputs": ["승인된 기획과 디자인", "작업 사본 파일 목록", "검증 반려 사유", "허용된 검증 명령 목록"],
+  "outputs": ["파일 변경안(create/replace/edit, 삭제 불가)", "모의/실제 연결 구분", "검증 명령 제안", "남은 하위 작업"],
+  "permissions": {"model_tools": ["Read", "Glob", "Grep"], "tool_scope": "작업 사본 폴더 안 읽기만",
+                  "write": "projects/<프로젝트>/workspace 안, 제어 프로그램이 경로 검사 후 적용", "delete": false,
+                  "shell": "허용 목록의 검증 명령만 제어 프로그램이 실행", "network": false},
+  "timeout_sec": 1200,
+  "token_limit": 150000
+}

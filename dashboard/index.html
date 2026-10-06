@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI팀 관리 화면</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>AI팀</h1>
+      <div class="proj">
+        <div class="flex"><select id="projSel" aria-label="프로젝트 선택"></select>
+          <button class="small" id="newProjBtn">+ 새 프로젝트</button></div>
+        <div class="goal" id="projGoal"></div>
+      </div>
+    </div>
+    <div class="controls" hidden>
+      <span class="pill" id="teamState">-</span>
+      <button id="btnStart" class="primary">전체 시작</button>
+      <button id="btnPause">일시 중지</button>
+      <button id="btnResume">재개</button>
+      <button id="btnEmergency" class="danger">긴급 중지</button>
+      <button id="btnSettings">설정</button>
+    </div>
+  </header>
+  <div id="banners"></div>
+  <div class="kpis" id="kpis"></div>
+  <h2>내가 해야 할 일과 승인 대기</h2>
+  <div id="decisions" class="list"></div>
+  <h2>부서 흐름 <span class="small muted">실제 실행 이벤트로만 움직입니다. 진행률은 측정할 수 없어 표시하지 않습니다.</span></h2>
+  <div class="pipeline" id="pipeline"></div>
+  <div class="loop">출시 후: 5 출시·운영(문의 수집) → 1 기획(분석·개선안) → 내가 선택 → 2 → 3 → 4 → 5 업데이트</div>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button data-tab="timeline" class="on">작업 타임라인</button>
+    <button data-tab="inquiries">고객 문의·문제 묶음</button>
+    <button data-tab="proposals">개선안</button>
+    <button data-tab="preview">디자인·앱 미리보기</button>
+    <button data-tab="qa">검증 결과·결과물</button>
+    <button data-tab="queue">대기·대신 진행 작업</button>
+  </nav>
+  <section class="panel" id="panel"></section>
+</div>
+
+<div class="modal" id="projModal" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+  <div class="box">
+    <h2 id="pmTitle">새 프로젝트</h2>
+    <label for="pmName">앱 이름 (필수)</label><input id="pmName" maxlength="60">
+    <label for="pmIdea">아이디어 (필수, 10자 이상)</label>
+    <textarea id="pmIdea" placeholder="누구의 어떤 문제를 어떻게 해결하는 앱인지 자유롭게 적어 주세요"></textarea>
+    <label for="pmCust">주요 고객 (선택)</label><input id="pmCust">
+    <label for="pmSrc">기존 코드 폴더 (선택) — 원본은 수정하지 않고 작업 사본을 만듭니다</label>
+    <input id="pmSrc" placeholder="예: D:\Work\my-app">
+    <label class="flex"><input type="checkbox" id="pmDemo" style="width:auto"> 모의 데모로 만들기 (실제 모델 호출·비용 없음)</label>
+    <p class="small muted">첨부 자료는 생성 후 <code>inbox\프로젝트이름\</code> 폴더에 .md/.txt로 넣으면 기획 부서가 자료로만 읽습니다.</p>
+    <div class="flex"><button class="primary" id="pmOk">만들기</button><button id="pmCancel">닫기</button></div>
+    <p id="pmErr" class="small" style="color:var(--err)"></p>
+  </div>
+</div>
+
+<div class="modal" id="setModal" role="dialog" aria-modal="true" aria-labelledby="smTitle">
+  <div class="box" id="setBox"></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
