@@ -28,6 +28,9 @@ MAX_DEV_CHAIN = 8
 MAX_QA_FAILS = 5
 
 
+_INTERNAL_REVIEW = re.compile(r"검토|승인|검증|리뷰|확인해\s*주|review|approv", re.I)
+
+
 class GateError(Exception):
     pass
 
@@ -126,6 +129,11 @@ class Workflow:
                       project_id=task["project_id"], dept=to_dept, task_id=task["id"],
                       is_mock=self._is_mock(task["project_id"]))
         self.db.update("tasks", task["id"], next_dept=to_dept)
+        proj = self.project(task["project_id"])
+        stage = {"design": "디자인 중", "development": "개발 중", "qa": "검증 중",
+                 "release": "출시 준비 중", "planning": "기획 보완 중"}.get(to_dept)
+        if stage and proj["stage"] != "운영 중":
+            self.db.update("projects", proj["id"], stage=stage)
 
     def add_decision(self, pid, kind, title, body, dedup, cycle_id=None, blocks=""):
         if self.db.one("SELECT 1 FROM decisions WHERE dedup_key=?", (dedup,)):
@@ -139,6 +147,11 @@ class Workflow:
 
     def add_user_actions(self, task, actions):
         for a in actions or []:
+            if _INTERNAL_REVIEW.search(a["todo"]):
+                # 검토·승인은 제어 프로그램이 결정 요청으로 따로 묻는다. 중복 요청은 올리지 않는다.
+                self.db.event("filtered", f"불필요한 사용자 요청 제외: {a['todo']}",
+                              project_id=task["project_id"], dept=task["dept"], task_id=task["id"])
+                continue
             self.add_decision(task["project_id"], "user_action", a["todo"], a,
                               _key("ua", task["project_id"], a["todo"]),
                               cycle_id=task["cycle_id"], blocks=a.get("blocked_work", ""))
@@ -420,14 +433,8 @@ class Workflow:
         commit = gitops.commit_paths(ws, [r for r, _ in planned],
                                      f"AI-Team task {task['id']}: {out['summary'][:60]}")
         journal.unlink(missing_ok=True)
-        allow = settings.load()["check_command_allowlist"]
-        ps = self.psettings(proj)
-        cur = list(ps.get("checks") or [])
-        for c in out["proposed_checks"]:
-            c = " ".join(c.split())
-            if any(c == a or c.startswith(a + " ") for a in allow) and c not in cur:
-                cur.append(c)
-        self.set_psettings(proj, {"checks": cur[:5]})
+        self.set_psettings(proj, {"checks": merge_checks(self.psettings(proj).get("checks") or [],
+                                                         out["proposed_checks"])})
         self.save_artifact(task, f"development/task-{task['id']}.json",
                            jd({k: v for k, v in out.items() if k != "changes"} |
                               {"files": [r for r, _ in planned], "commit": commit}),
@@ -453,14 +460,14 @@ class Workflow:
         proj = self.project(task["project_id"])
         cyc = self.cycle(task["cycle_id"])
         ws = P.workspace(proj["slug"])
-        cmds = self.psettings(proj).get("checks") or []
+        cmds = order_checks(self.psettings(proj).get("checks") or [])
         results = checks.run_checks(ws, cmds, task["id"]) if cmds else []
         findings = []
         for r in results:
             if not r["ok"]:
                 findings.append({"severity": "high", "area": "development",
                                  "description": f"검증 명령 실패: {r['command']}",
-                                 "evidence": r["output"][-600:]})
+                                 "evidence": checks.excerpt(r["output"])})
         findings += self._test_shrink(ws, cyc["base_commit"])
         findings += self._trivial_checks(ws, cmds)
         if not cmds:
@@ -470,7 +477,7 @@ class Workflow:
                              "evidence": "검증 증거가 없으면 출시로 넘기지 않습니다"})
         inp = jl(task["input_json"], {})
         inp["check_results"] = [{k: r[k] for k in ("command", "ok", "exit", "seconds")} |
-                                {"output_tail": r["output"][-1500:]} for r in results]
+                                {"output_excerpt": checks.excerpt(r["output"])} for r in results]
         self.db.update("tasks", task["id"], input_json=jd(inp))
         return results, findings
 
@@ -971,6 +978,30 @@ class Workflow:
 
 
 # ───────────── 도우미 ─────────────
+SETUP_CHECKS = ("npm ci --ignore-scripts", "npm install --ignore-scripts")
+MAX_CHECKS = 8
+
+
+def order_checks(cmds):
+    """의존성 설치 명령은 항상 먼저 실행한다."""
+    return sorted(cmds, key=lambda c: 0 if c in SETUP_CHECKS else 1)
+
+
+def merge_checks(current, proposed):
+    """제안된 검증 명령을 허용 목록 안에서만 추가한다. 기존 검증은 지우지 않는다(기준 유지).
+    설치 명령은 하나만 유지하며 가장 최근 제안으로 바꾼다."""
+    allow = settings.load()["check_command_allowlist"]
+    cur = [c for c in current]
+    for c in proposed:
+        c = " ".join(c.split())
+        if not any(c == a or c.startswith(a + " ") for a in allow):
+            continue
+        if c in SETUP_CHECKS:
+            cur = [x for x in cur if x not in SETUP_CHECKS]
+            cur.insert(0, c)
+        elif c not in cur and len([x for x in cur if x not in SETUP_CHECKS]) < MAX_CHECKS:
+            cur.append(c)
+    return order_checks(cur)
 def _bump(v):
     try:
         a, b, c = (int(x) for x in v.split("."))

@@ -168,7 +168,9 @@ class AdminHandler(_Base):
             patch = {}
             if "checks" in b:
                 from .safety import validate_check_command
-                patch["checks"] = [validate_check_command(c, allow) for c in b["checks"] if c.strip()][:5]
+                from .workflow import order_checks
+                patch["checks"] = order_checks([validate_check_command(c, allow)
+                                                for c in b["checks"] if c.strip()][:10])
             if "deploy_command" in b:
                 cmd = (b["deploy_command"] or "").strip()
                 if cmd:

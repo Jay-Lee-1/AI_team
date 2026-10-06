@@ -127,3 +127,24 @@ class TrivialCheckTest(TeamCase):
         self.assertIn("아무것도 검사하지 않는", text)
         self.assertIn("스크립트가 없습니다: npm run build", text)
         self.assertNotIn("test", " ".join(x["evidence"] for x in f if "lint" not in x["evidence"] and "build" not in x["description"]))
+
+
+class CheckMergeTest(TeamCase):
+    def test_setup_first_single_and_never_removed(self):
+        from aiteam.workflow import merge_checks
+        cur = merge_checks([], ["npm run build", "npm test", "npm ci --ignore-scripts"])
+        self.assertEqual(cur[0], "npm ci --ignore-scripts")
+        cur = merge_checks(cur, ["npm install --ignore-scripts", "rm -rf x", "npm run lint"])
+        self.assertEqual(cur, ["npm install --ignore-scripts", "npm run build", "npm test", "npm run lint"])
+        cur = merge_checks(cur, [])  # 제안이 없어도 기존 검증은 유지
+        self.assertIn("npm test", cur)
+
+
+class ExcerptTest(TeamCase):
+    def test_error_message_kept_over_stack_trace(self):
+        from aiteam.checks import excerpt
+        out = "vite build\nerror during build:\nCould not resolve entry module \"index.html\".\n" + \
+              "\n".join(f"    at fn{i} (node_modules/x.js:{i})" for i in range(200))
+        e = excerpt(out)
+        self.assertIn("Could not resolve entry module", e)
+        self.assertNotIn("at fn150", e)

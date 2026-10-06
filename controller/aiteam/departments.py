@@ -50,5 +50,8 @@ def build_prompt(task, sections, last_error=None):
         lines.append(f"\n[{title}]\n{body}")
     if last_error:
         lines.append(f"\n[이전 시도의 오류 — 같은 실수를 반복하지 말 것]\n{last_error[:1500]}")
+    lines.append("\n[user_actions 규칙] 사용자만 할 수 있는 외부 작업(계정 가입, 결제·본인 인증, 키 발급, 도메인 구매, "
+                 "스토어 등록, 외부 서비스 연결)이 지금 필요할 때만 넣는다. 검토·승인·확인 요청은 넣지 않는다 "
+                 "(승인은 제어 프로그램이 따로 묻는다). 필요 없으면 빈 배열.")
     lines.append("\n지정된 JSON 구조로만 답하라.")
     return "\n".join(lines)

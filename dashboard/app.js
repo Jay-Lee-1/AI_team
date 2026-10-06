@@ -33,7 +33,7 @@ const SEV = { critical: "치명", high: "높음", medium: "보통", low: "낮음
 const KIND = { bug: "오류", feature: "기능 요청", usability: "사용성", question: "질문", other: "기타" };
 const PSTATUS = { proposed: "선택 대기", held: "보류", rejected: "거절", selected: "선택됨", in_progress: "진행 중", deployed: "배포 완료" };
 const TSTATUS = { queued: "대기열", running: "실행 중", done: "완료", failed: "실패(보고됨)", cancelled: "취소", needs_verification: "검증 필요" };
-const EVK = { project: "프로젝트", queued: "대기열 추가", start: "시작", done: "완료", handoff: "인계", decision: "결정", control: "제어", blocked: "차단", error: "오류", retry: "재시도", backoff: "호출 제한", recover: "복구", fallback: "대체 업무", inquiry: "문의", release: "출시", settings: "설정", warn: "경고" };
+const EVK = { project: "프로젝트", queued: "대기열 추가", start: "시작", done: "완료", handoff: "인계", decision: "결정", control: "제어", blocked: "차단", error: "오류", retry: "재시도", backoff: "호출 제한", recover: "복구", fallback: "대체 업무", inquiry: "문의", release: "출시", settings: "설정", warn: "경고", filtered: "요청 제외" };
 const DEPT = { planning: "기획", design: "디자인", development: "개발", qa: "검증", release: "출시·운영" };
 
 async function refresh() {

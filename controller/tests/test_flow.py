@@ -77,3 +77,14 @@ class FlowTest(TeamCase):
         self.wf.decide_proposal(ids[1], "hold")
         self.assertIsNone(self.task("design.improvement"))
         self.assertEqual(self.db.one("SELECT COUNT(*) n FROM cycles WHERE kind='improvement'")["n"], 0)
+
+
+class UserActionFilterTest(TeamCase):
+    def test_review_requests_not_shown_as_user_tasks(self):
+        pid = self.wf.create_project("p", "아이디어 열 글자 이상입니다", demo=True)
+        task = {"id": 1, "project_id": pid, "dept": "design", "cycle_id": None}
+        ua = {"todo": "설계 검토 및 승인", "why_now": "", "where": "", "steps": [],
+              "cost": {"value": "", "kind": "unknown"}, "report_back": "", "blocked_work": "", "meanwhile": ""}
+        self.wf.add_user_actions(task, [ua, ua | {"todo": "결제 서비스 가입과 본인 인증"}])
+        titles = [d["title"] for d in self.db.all("SELECT title FROM decisions")]
+        self.assertEqual(titles, ["결제 서비스 가입과 본인 인증"])
